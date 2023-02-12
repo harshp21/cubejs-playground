@@ -5,9 +5,7 @@ import { Layout, Alert, notification, Spin } from 'antd';
 import { fetch } from 'whatwg-fetch';
 import { withRouter } from 'react-router';
 
-import { event, setAnonymousId } from './events';
 import GlobalStyles from './components/GlobalStyles';
-import { AppContext } from './hooks';
 import './index.less';
 import './index.css';
 
@@ -56,9 +54,6 @@ class App extends Component {
       const error = promiseRejectionEvent.reason;
       console.log(error);
       const e = (error.stack || error).toString();
-      event('Playground Error', {
-        error: e,
-      });
       notification.error({
         message: (
           <span>
@@ -83,10 +78,6 @@ class App extends Component {
 
     const res = await fetch('/playground/context');
     const context = await res.json();
-    setAnonymousId(context.anonymousId, {
-      coreServerVersion: context.coreServerVersion,
-      projectFingerprint: context.projectFingerprint,
-    });
     this.setState({ context }, () => {
       if (context.shouldStartConnectionWizardFlow) {
         history.push('/connection');
@@ -94,15 +85,8 @@ class App extends Component {
     });
   }
 
-  componentDidCatch(error, info) {
-    event('Playground Error', {
-      error: (error.stack || error).toString(),
-      info: info.toString(),
-    });
-  }
-
   render() {
-    const { context, fatalError, slowQuery, isPreAggregationBuildInProgress } =
+    const { context, fatalError } =
       this.state || {};
     const { children } = this.props;
 
@@ -111,12 +95,6 @@ class App extends Component {
     }
 
     return (
-      <AppContext.Provider
-        value={{
-          slowQuery,
-          isPreAggregationBuildInProgress,
-        }}
-      >
         <Layout style={{ height: '100%' }}>
           <GlobalStyles />
           <Layout.Content style={{ height: '100%' }}>
@@ -131,7 +109,6 @@ class App extends Component {
             )}
           </Layout.Content>
         </Layout>
-      </AppContext.Provider>
     );
   }
 }

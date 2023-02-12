@@ -11,7 +11,7 @@ export default function OrderGroup({ orderMembers, onOrderChange, onReorder }) {
       <Droppable droppableId="droppable">
         {(provided) => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
-            {orderMembers.map(({ id, title, order }, index) => (
+            {orderMembers.filter(item => item).map(({ id, title, order }, index) => (
               <DraggableItem
                 key={id}
                 id={id}

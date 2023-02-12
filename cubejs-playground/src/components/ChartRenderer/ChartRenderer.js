@@ -1,15 +1,7 @@
 import { useEffect } from 'react';
-import { Alert, Spin, Typography } from 'antd';
 import styled from 'styled-components';
 
 import { dispatchPlaygroundEvent } from '../../utils';
-import {
-  useDeepCompareMemoize,
-  useSlowQuery,
-  useIsPreAggregationBuildInProgress,
-} from '../../hooks';
-
-const { Text } = Typography;
 
 const ChartContainer = styled.div`
   visibility: ${(props) => (props.hidden ? 'hidden' : 'visible')};
@@ -19,14 +11,6 @@ const ChartContainer = styled.div`
     min-height: 400px;
     border: none;
   }
-`;
-
-const RequestMessage = styled.div`
-  display: flex;
-  width: 100%;
-  min-height: 400px;
-  align-items: center;
-  justify-content: center;
 `;
 
 export default function ChartRenderer({
@@ -39,8 +23,6 @@ export default function ChartRenderer({
   pivotConfig,
   onChartRendererReadyChange,
 }) {
-  const slowQuery = useSlowQuery();
-  const isPreAggregationBuildInProgress = useIsPreAggregationBuildInProgress();
 
   useEffect(() => {
     return () => {
@@ -59,30 +41,12 @@ export default function ChartRenderer({
       });
     }
     // eslint-disable-next-line
-  }, useDeepCompareMemoize([iframeRef, isChartRendererReady, pivotConfig, query, chartType]));
+  }, [iframeRef, isChartRendererReady, pivotConfig, query, chartType]);
 
   return (
     <>
-      {slowQuery ? (
-        <Alert
-          style={{ marginBottom: 24 }}
-          message="Query is too slow to be renewed during the user request and was served from the cache. Please consider using low latency pre-aggregations."
-          type="warning"
-        />
-      ) : null}
-
-      {isPreAggregationBuildInProgress ? (
-        <RequestMessage>
-          <Text strong style={{ fontSize: 18 }}>
-            Building pre-aggregations...
-          </Text>
-        </RequestMessage>
-      ) : !isChartRendererReady ? (
-        <Spin />
-      ) : null}
-
       <ChartContainer
-        hidden={!isChartRendererReady || isPreAggregationBuildInProgress}
+        hidden={!isChartRendererReady}
       >
         <iframe
           ref={iframeRef}

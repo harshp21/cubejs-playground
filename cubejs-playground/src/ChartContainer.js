@@ -8,7 +8,6 @@ import styled from 'styled-components';
 import { Redirect, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import PrismCode from './PrismCode';
-import { playgroundAction } from './events';
 import { copyToClipboard } from './utils';
 
 const StyledCard = styled(Card)`
@@ -101,7 +100,6 @@ class ChartContainer extends Component {
           <Button.Group>
             <Button
               onClick={() => {
-                playgroundAction('Show Chart');
                 this.setState({
                   showCode: null,
                 });
@@ -114,7 +112,6 @@ class ChartContainer extends Component {
             </Button>
             <Button
               onClick={() => {
-                playgroundAction('Show Query');
                 this.setState({
                   showCode: 'query',
                 });
@@ -146,9 +143,7 @@ class ChartContainer extends Component {
               href={frameworkItem.docsLink}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() =>
-                playgroundAction('Unsupported Framework Docs', { framework })
-              }
+              onClick={() => {}}
             >
               {frameworkItem.title}
               &nbsp;docs
@@ -173,7 +168,6 @@ class ChartContainer extends Component {
             size="small"
             onClick={() => {
               copyToClipboard(query);
-              playgroundAction('Copy Query to Clipboard');
             }}
             type="primary"
           >
@@ -200,18 +194,15 @@ ChartContainer.propTypes = {
   error: PropTypes.object,
   render: PropTypes.func.isRequired,
   codeSandboxSource: PropTypes.string,
-  dashboardSource: PropTypes.object,
   hideActions: PropTypes.array,
   query: PropTypes.object,
   history: PropTypes.object.isRequired,
   chartingLibrary: PropTypes.string.isRequired,
-  setChartLibrary: PropTypes.func.isRequired,
 };
 
 ChartContainer.defaultProps = {
   query: {},
   hideActions: null,
-  dashboardSource: null,
   codeSandboxSource: null,
   error: null,
   resultSet: null,

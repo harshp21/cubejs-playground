@@ -1,8 +1,6 @@
 import { useState, useRef, useLayoutEffect, useEffect } from 'react';
 import { Col, Row } from 'antd';
 import { QueryBuilder, useDryRun } from '@cubejs-client/react';
-
-import { playgroundAction } from './events';
 import MemberGroup from './QueryBuilder/MemberGroup';
 import FilterGroup from './QueryBuilder/FilterGroup';
 import TimeGroup from './QueryBuilder/TimeGroup';
@@ -56,20 +54,19 @@ const playgroundActionUpdateMethods = (updateMethods, memberName) =>
   Object.keys(updateMethods)
     .map((method) => ({
       [method]: (member, values, ...rest) => {
-        let actionName = `${method
-          .split('')
-          .map((c, i) => (i === 0 ? c.toUpperCase() : c))
-          .join('')} Member`;
-        if (values && values.values) {
-          actionName = 'Update Filter Values';
-        }
-        if (values && values.dateRange) {
-          actionName = 'Update Date Range';
-        }
-        if (values && values.granularity) {
-          actionName = 'Update Granularity';
-        }
-        playgroundAction(actionName, { memberName });
+        // let actionName = `${method
+        //   .split('')
+        //   .map((c, i) => (i === 0 ? c.toUpperCase() : c))
+        //   .join('')} Member`;
+        // if (values && values.values) {
+        //   actionName = 'Update Filter Values';
+        // }
+        // if (values && values.dateRange) {
+        //   actionName = 'Update Date Range';
+        // }
+        // if (values && values.granularity) {
+        //   actionName = 'Update Granularity';
+        // }
         return updateMethods[method].apply(null, [member, values, ...rest]);
       },
     }))
@@ -80,7 +77,7 @@ export default function PlaygroundQueryBuilder({
   apiUrl,
   cubejsToken,
   setQuery,
-  dashboardSource,
+  cubejsApi
 }) {
   const ref = useRef(null);
   const [isChartRendererReady, setChartRendererReady] = useState(false);
@@ -119,6 +116,7 @@ export default function PlaygroundQueryBuilder({
     <QueryBuilder
       query={query}
       setQuery={setQuery}
+      cubejsApi={cubejsApi}
       wrapWithQueryRenderer={false}
       render={({
         error,
@@ -226,7 +224,6 @@ export default function PlaygroundQueryBuilder({
                   <SelectChartType
                     chartType={chartType}
                     updateChartType={(type) => {
-                      playgroundAction('Change Chart Type');
                       updateChartType(type);
                     }}
                   />
@@ -235,7 +232,7 @@ export default function PlaygroundQueryBuilder({
                     isQueryPresent={isQueryPresent}
                     limit={query.limit}
                     pivotConfig={pivotConfig}
-                    orderMembers={orderMembers}
+                    orderMembers={orderMembers.filter(item => item)}
                     onReorder={updateOrder.reorder}
                     onOrderChange={updateOrder.set}
                     onMove={updatePivotConfig.moveItem}
@@ -271,7 +268,6 @@ export default function PlaygroundQueryBuilder({
                     chartType={chartType}
                     pivotConfig={pivotConfig}
                     framework={'react'}
-                    dashboardSource={dashboardSource}
                     render={({ framework }) => {
                       return (
                         <ChartRenderer
