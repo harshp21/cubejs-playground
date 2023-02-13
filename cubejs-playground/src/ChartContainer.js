@@ -206,6 +206,7 @@ ChartContainer.defaultProps = {
   codeSandboxSource: null,
   error: null,
   resultSet: null,
+  chartingLibrary: 'recharts'
 };
 
 export default withRouter(ChartContainer);
